@@ -58,6 +58,5 @@ func part2(input []string) int {
 		}
 	}
 
-	fmt.Println(pos)
 	return pos[0] * pos[1]
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"2020/input"
 	"testing"
 )
 
@@ -16,10 +17,48 @@ var entries []string = []string{
 	"dotted black bags contain no other bags.",
 }
 
+var entries2 []string = []string{
+	"shiny gold bags contain 2 dark red bags.",
+	"dark red bags contain 2 dark orange bags.",
+	"dark orange bags contain 2 dark yellow bags.",
+	"dark yellow bags contain 2 dark green bags.",
+	"dark green bags contain 2 dark blue bags.",
+	"dark blue bags contain 2 dark violet bags.",
+	"dark violet bags contain no other bags.",
+}
+
 func TestPart1(t *testing.T) {
-	expected := 11
+	expected := 4
 
 	result := part1(entries)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
+
+func TestPart1Full(t *testing.T) {
+	expected := 252
+	input := input.GetStringInput("input.txt")
+
+	result := part1(input)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
+
+func TestPart2Entries1(t *testing.T) {
+	expected := 32
+
+	result := part2(entries)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
+
+func TestPart2Entries2(t *testing.T) {
+	expected := 126
+
+	result := part2(entries2)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
