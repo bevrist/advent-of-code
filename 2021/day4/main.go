@@ -10,8 +10,9 @@ import (
 )
 
 type Board struct {
-	pos [5][5]int
-	chk [5][5]bool
+	pos      [5][5]int
+	chk      [5][5]bool
+	complete *bool
 }
 
 // extract list of bingo numbers from input text
@@ -109,6 +110,58 @@ func part1(numbers []int, boards []Board) int {
 	return -999
 }
 
+// find the losing board from the provided set of numbers
+func part2(numbers []int, boards []Board) int {
+	winCount := 0
+	// attempt to find a winning streak from the numbers list, starting with ptr position 4 (first 5 numbers)
+	for ptr := 4; ptr < len(numbers); ptr++ {
+		// fmt.Printf("ptr: %d, num: %d\n", ptr, numbers[ptr])
+		// iterate through boards to find a winning board
+		for brdNum, board := range boards {
+			_ = brdNum
+			// for current board, check current subset of numbers list and mark winning board numbers on the `chk` board
+			for _, inNum := range numbers[:ptr+1] {
+				// compare current board against current number and mark winning numbers on `chk` board
+				for x := 0; x < 5; x++ {
+					for y := 0; y < 5; y++ {
+						if board.pos[x][y] == inNum {
+							board.chk[x][y] = true
+						}
+					}
+				}
+			}
+			// check the `chk` board for a win
+			if isWinner(board) {
+				// if board has already won, skip
+				if *board.complete {
+					continue
+				}
+				*board.complete = true // mark completed boards so they dont get counted twice
+				// fmt.Printf("\nWinning Board Number: %d \n", brdNum)
+				// printBoard(board)
+				// // calculate winning number by adding up unselected numbers and multiplying by the final number
+				// return getWinTotal(board, numbers[ptr])
+				winCount++
+				if winCount == len(boards) {
+					// fmt.Printf("\n win count: %d\n", winCount)
+					// fmt.Printf("curr num: %d\n", numbers[ptr])
+					fmt.Printf("Last Board Number: %d \n", brdNum)
+					printBoard(board)
+					// calculate Last number by adding up unselected numbers and multiplying by the final number
+					return getWinTotal(board, numbers[ptr])
+				}
+			}
+			// fmt.Printf("\nwin count: %d\n", winCount)
+			// fmt.Printf("curr num: %d\n", numbers[ptr])
+			// fmt.Printf("Board Number: %d\n", brdNum)
+			// fmt.Printf("complete: %v\n", *board.complete)
+			// printBoard(board)
+		}
+	}
+	// if no boards match, return -999
+	return -999
+}
+
 func getWinTotal(board Board, finalNum int) int {
 	// add up all NON-selected numbers
 	total := 0
@@ -119,6 +172,7 @@ func getWinTotal(board Board, finalNum int) int {
 			}
 		}
 	}
+	fmt.Printf("Total: %d * %d\n", total, finalNum)
 	return total * finalNum
 }
 

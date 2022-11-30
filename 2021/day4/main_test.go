@@ -1,7 +1,6 @@
 package main
 
 import (
-	"2021/input"
 	"testing"
 )
 
@@ -16,59 +15,65 @@ var boards []Board = []Board{
 		{21, 9, 14, 16, 7},
 		{6, 10, 3, 18, 5},
 		{1, 12, 20, 15, 19},
-	}, [5][5]bool{}},
+	}, [5][5]bool{},
+		new(bool)},
 	{[5][5]int{
 		{3, 15, 0, 2, 22},
 		{9, 18, 13, 17, 5},
 		{19, 8, 7, 25, 23},
 		{20, 11, 10, 24, 4},
 		{14, 21, 16, 12, 6},
-	}, [5][5]bool{}},
+	}, [5][5]bool{},
+		new(bool)},
 	{[5][5]int{
 		{14, 21, 17, 24, 4},
 		{10, 16, 15, 9, 19},
 		{18, 8, 23, 26, 20},
 		{22, 11, 13, 6, 5},
 		{2, 0, 12, 3, 7},
-	}, [5][5]bool{}},
+	}, [5][5]bool{},
+		new(bool)},
 }
 
-func TestPart1(t *testing.T) {
-	expected := 4512
+// func TestPart1(t *testing.T) {
+// 	expected := 4512
 
-	result := part1(numbers, boards)
-	if result != expected {
-		t.Errorf("got: %d, want: %d", result, expected)
-	}
-}
-
-func TestPart1Full(t *testing.T) {
-	input := input.GetStringInput("input.txt")
-	numbers = getBingoNums(input[0])
-	boards = getBingoBoards(input[1:])
-
-	expected := 4662
-
-	result := part1(numbers, boards)
-	if result != expected {
-		t.Errorf("got: %d, want: %d", result, expected)
-	}
-}
-
-// func TestPart2(t *testing.T) {
-// 	expected := 230
-
-// 	result := part2(entries)
+// 	result := part1(numbers, boards)
 // 	if result != expected {
 // 		t.Errorf("got: %d, want: %d", result, expected)
 // 	}
 // }
 
+// func TestPart1Full(t *testing.T) {
+// 	input := input.GetStringInput("input.txt")
+// 	numbers = getBingoNums(input[0])
+// 	boards = getBingoBoards(input[1:])
+
+// 	expected := 4662
+
+// 	result := part1(numbers, boards)
+// 	if result != expected {
+// 		t.Errorf("got: %d, want: %d", result, expected)
+// 	}
+// }
+
+func TestPart2(t *testing.T) {
+	expected := 1924
+
+	result := part2(numbers, boards)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
+
 // func TestPart2Full(t *testing.T) {
 // 	input := input.GetStringInput("input.txt")
-// 	expected := 2105273490
+// 	numbers = getBingoNums(input[0])
+// 	boards = getBingoBoards(input[1:])
 
-// 	result := part2(input)
+// 	expected := 4662
+
+// 	result := part2(numbers, boards)
 // 	if result != expected {
 // 		t.Errorf("got: %d, want: %d", result, expected)
 // 	}
