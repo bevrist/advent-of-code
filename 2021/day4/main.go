@@ -12,7 +12,7 @@ import (
 type Board struct {
 	pos      [5][5]int
 	chk      [5][5]bool
-	complete *bool
+	complete *bool // pointer so this status can be persistently stored
 }
 
 // extract list of bingo numbers from input text

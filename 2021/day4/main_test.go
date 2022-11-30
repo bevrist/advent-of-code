@@ -72,15 +72,15 @@ func TestPart2(t *testing.T) {
 	}
 }
 
-// func TestPart2Full(t *testing.T) {
-// 	input := input.GetStringInput("input.txt")
-// 	numbers := getBingoNums(input[0])
-// 	boards := getBingoBoards(input[1:])
+func TestPart2Full(t *testing.T) {
+	input := input.GetStringInput("input.txt")
+	numbers := getBingoNums(input[0])
+	boards := getBingoBoards(input[1:])
 
-// 	expected := 4662
+	expected := 12080
 
-// 	result := part2(numbers, boards)
-// 	if result != expected {
-// 		t.Errorf("got: %d, want: %d", result, expected)
-// 	}
-// }
+	result := part2(numbers, boards)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
