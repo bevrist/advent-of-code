@@ -41,6 +41,7 @@ func getBingoBoards(input []string) []Board {
 		if len(split) <= 1 {
 			if y != 0 {
 				// export board that has been populated
+				currBoard.complete = new(bool)
 				boards = append(boards, *currBoard)
 				currBoard = new(Board)
 				y = 0
