@@ -13,9 +13,8 @@ var testInput []string = []string{
 
 func TestPart1(t *testing.T) {
 	expected := 15
-	parsed := parseInput(testInput)
 
-	result := part1(parsed)
+	result := part1(testInput)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
@@ -24,9 +23,8 @@ func TestPart1(t *testing.T) {
 func TestPart1Full(t *testing.T) {
 	expected := 12645
 	input := input.GetStringInput("input.txt")
-	parsed := parseInput(input)
 
-	result := part1(parsed)
+	result := part1(input)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}

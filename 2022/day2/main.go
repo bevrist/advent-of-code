@@ -10,10 +10,8 @@ import (
 func main() {
 	input := input.GetStringInput("input.txt")
 
-	parsed := parseInput(input)
-
-	fmt.Printf("Part1: %d\n", part1(parsed))
-	// fmt.Printf("Part2: %d\n", part2(parsed))
+	fmt.Printf("Part1: %d\n", part1(input))
+	// fmt.Printf("Part2: %d\n", part2(input))
 }
 
 // stats for each round
@@ -34,8 +32,9 @@ const (
 	loss int = 0
 )
 
-func parseInput(input []string) []Round {
-	var ret []Round
+// get total score for the provided play
+func part1(input []string) int {
+	var rounds []Round
 	for _, entry := range input {
 		currRound := new(Round)
 		// get opponent play
@@ -91,13 +90,9 @@ func parseInput(input []string) []Round {
 
 		// fmt.Printf("%v\n", entry)
 		// fmt.Printf("%+v\n\n", currRound)
-		ret = append(ret, *currRound)
+		rounds = append(rounds, *currRound)
 	}
-	return ret
-}
 
-// get total score for the provided play
-func part1(rounds []Round) int {
 	total := 0
 	for _, round := range rounds {
 		total += round.score
