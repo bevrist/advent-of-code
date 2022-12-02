@@ -21,7 +21,7 @@ import (
 type Grid struct {
 	width  int
 	height int
-	grid   map[string]int
+	grid   map[string]*int
 }
 
 // coordinate returns string representation of coordinate for map lookup
@@ -29,14 +29,22 @@ func coordinate(x, y int) string {
 	return fmt.Sprintf("%d,%d", x, y)
 }
 
+// NewGrid creates a new grid object
 func NewGrid() *Grid {
-	return &Grid{width: 1, height: 1, grid: make(map[string]int)}
+	return &Grid{width: 1, height: 1, grid: make(map[string]*int)}
 }
 
+// NewGridInitialized creates a new grid object with values set to an initialized value
+func NewGridInitialized() *Grid {
+	return &Grid{width: 1, height: 1, grid: make(map[string]*int)}
+}
+
+// Width returns the length of the y coordinate of the grid
 func (g Grid) Height() int {
 	return g.height
 }
 
+// Width returns the width of the x coordinate of the grid
 func (g Grid) Width() int {
 	return g.width
 }
@@ -84,7 +92,7 @@ func inBounds(x, y int, g Grid) bool {
 	if x < 0 || x > g.width {
 		return false
 	}
-	if y < 0 || y > g.width {
+	if y < 0 || y > g.height {
 		return false
 	}
 	return true
@@ -96,29 +104,35 @@ func (g *Grid) Set(x, y int, value int) error {
 	if !inBounds(x, y, *g) {
 		return errors.New("coordinate out of bounds: " + fmt.Sprintf("%d,%d", x, y))
 	}
-	g.grid[coordinate(x, y)] = value
+	g.grid[coordinate(x, y)] = &value
 	return nil
 }
 
-// Get a value at a coordinate in the grid
+// Get a value at a coordinate in the grid, unset values are 0
 // value is always zero when out of bounds
 func (g Grid) Get(x, y int) int {
-	// check that x and y are within bounds of grid
-	if !inBounds(x, y, g) {
+	// return zero value if space is unset
+	if g.grid[coordinate(x, y)] == nil {
 		return 0
 	}
+	return *g.grid[coordinate(x, y)]
+}
+
+// GetRaw returns the raw pointer value at a coordinate
+// value is always nil when out of bounds
+func (g Grid) GetRaw(x, y int) *int {
 	return g.grid[coordinate(x, y)]
 }
 
 func (g Grid) String() string {
 	var ret string
-	for x := 0; x < g.width; x++ {
-		for y := 0; y < g.width; y++ {
-			// print value at grid location or print zero value if unset
+	for y := 0; y < g.height; y++ {
+		for x := 0; x < g.width; x++ {
+			// print value at grid location or print nil value if unset
 			if val, ok := g.grid[coordinate(x, y)]; ok {
-				ret += fmt.Sprintf("%d", val)
+				ret += fmt.Sprintf("%d", *val)
 			} else {
-				ret += fmt.Sprintf("%d", 0)
+				ret += "."
 			}
 		}
 		ret += "\n"
@@ -128,14 +142,19 @@ func (g Grid) String() string {
 
 func (g Grid) GoString() string {
 	var ret string
+	ret += "  _"
 	for x := 0; x < g.width; x++ {
-		ret += fmt.Sprintf("%d:", x)
-		for y := 0; y < g.width; y++ {
-			// print value at grid location or print zero value if unset
+		ret += fmt.Sprintf("%d____", x)
+	}
+	ret += "\n"
+	for y := 0; y < g.height; y++ {
+		ret += fmt.Sprintf("%d: ", y)
+		for x := 0; x < g.width; x++ {
+			// print value at grid location or print nil value if unset
 			if val, ok := g.grid[coordinate(x, y)]; ok {
-				ret += fmt.Sprintf(" %d:%d", y, val)
+				ret += fmt.Sprintf("%d\t", *val)
 			} else {
-				ret += fmt.Sprintf(" %d:%d", y, 0)
+				ret += ".\t"
 			}
 		}
 		ret += "\n"
