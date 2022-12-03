@@ -1,4 +1,5 @@
 // map backed 2 dimensional integer grid
+// O(1) set,access, and expansion. less optimal iterative access compared to 2d array
 
 // .......1..
 // ..1....1..
