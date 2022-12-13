@@ -15,7 +15,7 @@ func main() {
 	input := input.GetStringInput("input.txt")
 
 	fmt.Printf("Part1: %d\n", part1(input))
-	// fmt.Printf("Part2: %d\n", part2(input))
+	fmt.Printf("Part2: %d\n", part2(input))
 }
 
 // Pos a coordinate position
@@ -142,3 +142,139 @@ func part1(in []string) int {
 	}
 	return total
 }
+
+// =============================================
+
+func printGrid2(g structures.Grid[Location], rope [10]Pos) {
+	for y := g.Height() - 1; y >= 0; y-- {
+		for x := 0; x < g.Width(); x++ {
+			passed := false
+			for i := 0; i < len(rope); i++ {
+				if x == rope[i].x && y == rope[i].y {
+					fmt.Print(i)
+					passed = true
+					break
+				}
+			}
+			if !passed {
+				if g.Get(x, y).tCount == 0 {
+					fmt.Print(".")
+				} else {
+					fmt.Print("#")
+				}
+			}
+		}
+		fmt.Println()
+	}
+	fmt.Println()
+}
+
+// Clamp returns f clamped to [low, high]
+func Clamp(f, low, high float64) float64 {
+	if f < low {
+		return low
+	}
+	if f > high {
+		return high
+	}
+	return f
+}
+
+func updateBody(g *structures.Grid[Location], rope [10]Pos, direction Pos) [10]Pos {
+	//update head
+	rope[0].x += direction.x
+	rope[0].y += direction.y
+	// fmt.Println()
+	for i := 1; i < len(rope); i++ {
+		// move part to last head position if more than 1 position away
+		xDistance := float64(rope[i-1].x - rope[i].x)
+		yDistance := float64(rope[i-1].y - rope[i].y)
+		if (math.Abs(xDistance) >= 1 && math.Abs(yDistance) > 1) || (math.Abs(xDistance) > 1 && math.Abs(yDistance) >= 1) {
+			// move diagonal
+			// fmt.Printf("\ndiag: %v, pos: %v, front: %v, clampx/y %v %v", i, rope[i], rope[i-1], xDistance, yDistance)
+			rope[i].x += int(Clamp(xDistance, -1, 1))
+			rope[i].y += int(Clamp(yDistance, -1, 1))
+			// fmt.Printf(" new: %v", rope[i])
+			if i == 9 {
+				// increment Location count if tail moved
+				g.Set(rope[i].x, rope[i].y, Location{g.Get(rope[i].x, rope[i].y).tCount + 1})
+			}
+		} else if math.Abs(xDistance) > 1 || math.Abs(yDistance) > 1 {
+			// fmt.Printf("\nstraight: %v, pos: %v, front: %v, clampx/y %v %v", i, rope[i], rope[i-1], int(Clamp(xDistance, -1, 1)), int(Clamp(yDistance, -1, 1)))
+			//move vertical/horizontal
+			// fmt.Printf("x: %v, y: %v\n", xDistance, yDistance)
+			rope[i].x += int(Clamp(xDistance, -1, 1))
+			rope[i].y += int(Clamp(yDistance, -1, 1))
+			// fmt.Printf(" new: %v", rope[i])
+			if i == 9 {
+				// increment Location count if tail moved
+				g.Set(rope[i].x, rope[i].y, Location{g.Get(rope[i].x, rope[i].y).tCount + 1})
+			}
+		} else {
+			// fmt.Println("no move")
+			// fmt.Printf("|skip:%v,%v", i, rope[i])
+		}
+	}
+	// fmt.Println()
+	return rope
+}
+
+func part2(in []string) int {
+	g := structures.NewGrid[Location]()
+	g.IncSize(1000, 1000) // give it a minimum size
+	startSpace := Pos{500, 500}
+	g.Set(startSpace.x, startSpace.y, Location{1}) // mark starting space as visited
+	c := parseInput(in)
+
+	var rope [10]Pos
+	for i := 0; i < len(rope); i++ {
+		rope[i] = startSpace
+	}
+	var direction Pos
+
+	// fmt.Println("== Initial State ==")
+	// printGrid2(*g, rope)
+
+	for _, cmd := range c {
+		// fmt.Printf("== %v %v ==\n", cmd.direction, cmd.distance)
+		// move head according to command
+		for j := 0; j < cmd.distance; j++ {
+			// move head number of times
+			switch cmd.direction {
+			case up:
+				direction.y = 1
+				direction.x = 0
+			case right:
+				direction.x = 1
+				direction.y = 0
+			case down:
+				direction.y = -1
+				direction.x = 0
+			case left:
+				direction.x = -1
+				direction.y = 0
+			}
+			rope = updateBody(g, rope, direction)
+			// printGrid2(*g, rope)
+		}
+		// fmt.Println(rope)
+		// printGrid2(*g, rope)
+	}
+
+	// fmt.Println("== Final State ==")
+	// printGrid2(*g, rope)
+	// printGrid2(*g, [10]Pos{})
+
+	// count unique visited spaces
+	total := 0
+	for y := 0; y < g.Height(); y++ {
+		for x := 0; x < g.Width(); x++ {
+			if g.Get(x, y).tCount > 0 {
+				total++
+			}
+		}
+	}
+	return total
+}
+
+// 2423 too low
