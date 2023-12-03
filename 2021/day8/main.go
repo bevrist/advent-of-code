@@ -22,8 +22,8 @@ func main() {
 		"gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce",
 	}
 
-	// fmt.Printf("Part1: %d\n", part1(parseInput(input)))
-	fmt.Printf("Part2: %d\n===\n", part2(parseInput(input)))
+	fmt.Printf("Part1: %d\n", part1(parseInput(input)))
+	// fmt.Printf("Part2: %d\n===\n", part2(parseInput(input)))
 }
 
 type message struct {
