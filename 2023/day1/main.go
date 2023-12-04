@@ -21,8 +21,8 @@ func main() {
 	// 	"4nineeightseven2",
 	// 	"zoneight234",
 	// 	"7pqrstsixteen",
-	// 	"eighthree",
-	// 	"sevenine",
+	//// 	"eighthree",
+	//// 	"sevenine",
 	// }
 
 	parsed := parseInput(input)
