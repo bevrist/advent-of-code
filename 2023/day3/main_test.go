@@ -42,21 +42,25 @@ func TestPart1Full(t *testing.T) {
 	}
 }
 
-// func TestPart2(t *testing.T) {
-// 	expected := 2286
+func TestPart2(t *testing.T) {
+	expected := 467835
 
-// 	result := part2(testInput)
-// 	if result != expected {
-// 		t.Errorf("got: %d, want: %d", result, expected)
-// 	}
-// }
+	parsed := parseInput(testInput)
+
+	result := part2(parsed)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
 
 // func TestPart2Full(t *testing.T) {
 // 	expected := 63307
 
 // 	input := input.GetStringInput("input.txt")
 
-// 	result := part2(input)
+// 	parsed := parseInput(input)
+
+// 	result := part2(parsed)
 // 	if result != expected {
 // 		t.Errorf("got: %d, want: %d", result, expected)
 // 	}

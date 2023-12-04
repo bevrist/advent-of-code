@@ -29,7 +29,7 @@ func main() {
 	parsed := parseInput(input)
 
 	fmt.Printf("Part1: %d\n", part1(parsed))
-	// fmt.Printf("Part2: %d\n", part2(parsed))
+	fmt.Printf("Part2: %d\n", part2(parsed))
 }
 
 // number holds location and values of numbers in grid
@@ -180,7 +180,7 @@ func (g grid) isValidPosition(c coord) bool {
 	return true
 }
 
-// part1 find what
+// part1 find what numbers are next to symbols on the grid
 func part1(grid grid) int {
 	// fmt.Printf("%#v\n", grid)
 	// make map of symbol coordinates for quick search
@@ -209,6 +209,43 @@ func part1(grid grid) int {
 	var total int
 	for num := range numMap {
 		total += num.value
+	}
+	return total
+}
+
+// part2 find pairs of numbers that are adjacent to * symbols
+func part2(grid grid) int {
+	// fmt.Printf("%#v\n", grid)
+	// make map of * symbol coordinates for quick search
+	symMap := map[string]symbol{}
+	for _, symbol := range grid.symbols {
+		if symbol.symbol == "*" {
+			symMap[fmt.Sprint(symbol.pos.x, symbol.pos.y)] = symbol
+		}
+	}
+	matchMap := map[symbol][]number{} // map of symbols to list of adjacent numbers
+
+	// walk around numbers searching for symbols
+	for _, num := range grid.numbers {
+		// walk positions around number and search for symbol
+		for y := num.startPos.y - 1; y < num.startPos.y+2; y++ { //horizontal rows (y)
+			for x := num.startPos.x - 1; x < num.startPos.x+num.length+1; x++ { //vertical rows (x)
+				if grid.isValidPosition(coord{y, x}) {
+					symbol, exists := symMap[fmt.Sprint(x, y)]
+					if exists {
+						matchMap[symbol] = append(matchMap[symbol], num)
+					}
+				}
+			}
+		}
+	}
+
+	// for "gears" that have exactly 2 adjacent numbers, add the product to the total
+	var total int
+	for _, nums := range matchMap {
+		if len(nums) == 2 {
+			total += nums[0].value * nums[1].value
+		}
 	}
 	return total
 }
