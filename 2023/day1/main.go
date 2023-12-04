@@ -5,14 +5,18 @@ package main
 import (
 	"2023/input"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 func main() {
 	input := input.FileStringInput("input.txt")
+	// input := []string{
+	// 	"1abc2",
+	// 	"pqr3stu8vwx",
+	// 	"a1b2c3d4e5f",
+	// 	"treb7uchet",
+	// }
 	// input := []string{
 	// 	"two1nine",
 	// 	"eightwothree",
@@ -21,34 +25,34 @@ func main() {
 	// 	"4nineeightseven2",
 	// 	"zoneight234",
 	// 	"7pqrstsixteen",
-	//// 	"eighthree",
-	//// 	"sevenine",
+	// 	// "eighthree",
+	// 	// "sevenine",
 	// }
 
-	parsed := parseInput(input)
-
-	fmt.Printf("Part1: %d\n", part1(parsed))
-	fmt.Printf("Part2: %d\n", part1(parsed))
+	fmt.Printf("Part1: %d\n", part1(input))
+	fmt.Printf("Part2: %d\n", part2(input))
 }
 
-type line struct {
-	raw      string
-	firstNum int
-	lastNum  *int
-}
-
-func (l line) GoString() string {
-	var lastNumString string
-	if l.lastNum == nil {
-		lastNumString = "nil"
-	} else {
-		lastNumString = fmt.Sprintf("%d", *l.lastNum)
+// part1 get first and last digit in each line and add up the total
+func part1(input []string) int {
+	re := regexp.MustCompile(`(\d)`)
+	var total int
+	for _, line := range input {
+		allDigits := re.FindAllString(line, -1)
+		value, _ := strconv.Atoi(allDigits[0] + allDigits[len(allDigits)-1])
+		total += value
 	}
-	return fmt.Sprintf("{%s, %d, %s}", l.raw, l.firstNum, lastNumString)
+	return total
 }
 
-// convertNumberToInteger converts string literal "numbers" to integers
-func convertNumberToInteger(word string) (int, error) {
+// stringtoDigit converts string representation of number to digit
+func toDigit(number string) string {
+	// simply return digits as is
+	if len(number) == 1 {
+		return number
+	}
+
+	//convert spelled out numbers
 	numberMap := map[string]int{
 		"one":   1,
 		"two":   2,
@@ -61,62 +65,20 @@ func convertNumberToInteger(word string) (int, error) {
 		"nine":  9,
 		"zero":  0,
 	}
-	// Convert to lowercase to handle case variations
-	lowercaseWord := strings.ToLower(word)
-	num, found := numberMap[lowercaseWord]
-	if !found {
-		return -1, fmt.Errorf("unsupported word: %s", word)
-	}
-	return num, nil
+	return fmt.Sprint(numberMap[number])
 }
 
-func stringToInt(num string) string {
-	if len(num) > 1 {
-		numInt, err := convertNumberToInteger(num)
-		if err != nil {
-			log.Fatalln("failed to convert number.", num, err)
-		}
-		return fmt.Sprint(numInt)
-	}
-	return num
-}
-
-// parseInput extracts first and last digits from input strings to store in []line
-func parseInput(input []string) []line {
-	var lines []line
-	// get first match
+// part2 get first and last digits including spelled out
+func part2(input []string) int {
+	//get first match
 	reFirst := regexp.MustCompile(`(one|two|three|four|five|six|seven|eight|nine|zero|\d)`)
 	//get last match
 	reLast := regexp.MustCompile(`.*(one|two|three|four|five|six|seven|eight|nine|zero|\d).*$`)
-	for _, rawLine := range input {
-		first := stringToInt(reFirst.FindAllString(rawLine, -1)[0])
-		lastMatches := reLast.FindStringSubmatch(rawLine)
-		last := stringToInt(lastMatches[len(lastMatches)-1])
-		fmt.Println(first, last)
-		firstNum, _ := strconv.Atoi(first)
-		rawLast, _ := strconv.Atoi(last)
-		lastNum := &rawLast
-		newLine := line{raw: rawLine, firstNum: firstNum, lastNum: lastNum}
-		fmt.Printf("%#v\n", newLine)
-		lines = append(lines, newLine)
-	}
-	return lines
-}
-
-// get first and last digit in each line and add up the total
-func part1(input []line) int {
-	total := 0
+	var total int
 	for _, line := range input {
-		// fmt.Printf("%#v\n", line)
-		var value int
-		// concatenate the first and last numbers to form 2 digit integer
-		if line.lastNum != nil {
-			concatenatedStr := strconv.Itoa(line.firstNum) + strconv.Itoa(*line.lastNum)
-			value, _ = strconv.Atoi(concatenatedStr)
-		} else {
-			value = line.firstNum
-		}
-		// fmt.Println(value)
+		first := reFirst.FindAllString(line, -1)
+		last := reLast.FindStringSubmatch(line)
+		value, _ := strconv.Atoi(toDigit(first[0]) + toDigit(last[len(last)-1]))
 		total += value
 	}
 	return total

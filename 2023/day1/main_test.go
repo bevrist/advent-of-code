@@ -5,18 +5,27 @@ import (
 	"testing"
 )
 
-var testInput []string = []string{
+var testInputPart1 []string = []string{
 	"1abc2",
 	"pqr3stu8vwx",
 	"a1b2c3d4e5f",
 	"treb7uchet",
 }
 
+var testInputPart2 []string = []string{
+	"two1nine",
+	"eightwothree",
+	"abcone2threexyz",
+	"xtwone3four",
+	"4nineeightseven2",
+	"zoneight234",
+	"7pqrstsixteen",
+}
+
 func TestPart1(t *testing.T) {
 	expected := 142
-	parsed := parseInput(testInput)
 
-	result := part1(parsed)
+	result := part1(testInputPart1)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
@@ -26,9 +35,8 @@ func TestPart1Full(t *testing.T) {
 	expected := 54597
 
 	input := input.GetStringInput("input.txt")
-	parsed := parseInput(input)
 
-	result := part1(parsed)
+	result := part1(input)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
@@ -36,22 +44,20 @@ func TestPart1Full(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	expected := 281
-	parsed := parseInput(testInput)
 
-	result := part1(parsed)
+	result := part2(testInputPart2)
 	if result != expected {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
 }
 
-// func TestPart2Full(t *testing.T) {
-// 	expected := 211189
+func TestPart2Full(t *testing.T) {
+	expected := 54504
 
-// 	input := input.GetStringInput("input.txt")
-// 	parsed := parseInput(input)
+	input := input.GetStringInput("input.txt")
 
-// 	result := part1(parsed)
-// 	if result != expected {
-// 		t.Errorf("got: %d, want: %d", result, expected)
-// 	}
-// }
+	result := part2(input)
+	if result != expected {
+		t.Errorf("got: %d, want: %d", result, expected)
+	}
+}
