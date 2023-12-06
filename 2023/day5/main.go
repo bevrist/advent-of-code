@@ -233,16 +233,16 @@ func part2(gardenAlmanac gardenAlmanac) int {
 				defer wg.Done()
 				var localLowLocation int = int(math.Inf(1))
 				for j := 0; j < seed; j++ {
-					newSeedGuide := seedGuide{seed: seedStart + j}
-					newSeedGuide.soil = getAlmanacValue(gardenAlmanac.seedToSoil, newSeedGuide.seed)
-					newSeedGuide.fertilizer = getAlmanacValue(gardenAlmanac.soilToFertilizer, newSeedGuide.soil)
-					newSeedGuide.water = getAlmanacValue(gardenAlmanac.fertilizerToWater, newSeedGuide.fertilizer)
-					newSeedGuide.light = getAlmanacValue(gardenAlmanac.waterToLight, newSeedGuide.water)
-					newSeedGuide.temperature = getAlmanacValue(gardenAlmanac.lightToTemperature, newSeedGuide.light)
-					newSeedGuide.humidity = getAlmanacValue(gardenAlmanac.temperatureToHumidity, newSeedGuide.temperature)
-					newSeedGuide.location = getAlmanacValue(gardenAlmanac.humidityToLocation, newSeedGuide.humidity)
-					if newSeedGuide.location < localLowLocation {
-						localLowLocation = newSeedGuide.location
+					seed := seedStart + j
+					soil := getAlmanacValue(gardenAlmanac.seedToSoil, seed)
+					fertilizer := getAlmanacValue(gardenAlmanac.soilToFertilizer, soil)
+					water := getAlmanacValue(gardenAlmanac.fertilizerToWater, fertilizer)
+					light := getAlmanacValue(gardenAlmanac.waterToLight, water)
+					temperature := getAlmanacValue(gardenAlmanac.lightToTemperature, light)
+					humidity := getAlmanacValue(gardenAlmanac.temperatureToHumidity, temperature)
+					location := getAlmanacValue(gardenAlmanac.humidityToLocation, humidity)
+					if location < localLowLocation {
+						localLowLocation = location
 					}
 				}
 				(*lowLocations)[id] = localLowLocation

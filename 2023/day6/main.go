@@ -50,14 +50,14 @@ func parseInput(input []string) []result {
 	return results
 }
 
-// findWinningStrats calculates all possible hold times to bead distance record
+// findWinningStrats calculates all possible hold times to beat distance record
 func findWinningStrats(result result) []int {
 	var winners []int
-	for i := 0; i < result.time; i++ {
-		speed := i
-		distance := speed * (result.time - i)
+	for hold := 0; hold < result.time; hold++ {
+		speed := hold
+		distance := speed * (result.time - hold)
 		if distance > result.distance {
-			winners = append(winners, i)
+			winners = append(winners, hold)
 		}
 	}
 	return winners
