@@ -61,3 +61,10 @@ func TestPart2Full(t *testing.T) {
 		t.Errorf("got: %d, want: %d", result, expected)
 	}
 }
+
+func BenchmarkPart2Full(b *testing.B) {
+	input := input.GetStringInput("input.txt")
+	for i := 0; i < b.N; i++ {
+		part2(parseInput(input))
+	}
+}
