@@ -56,7 +56,7 @@ func main() {
 
 	parsed := parseInput(input)
 
-	// fmt.Printf("Part1: %d\n", part1(parsed))
+	fmt.Printf("Part1: %d\n", part1(parsed))
 	fmt.Printf("Part2: %d\n", part2(parsed))
 }
 
