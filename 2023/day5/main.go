@@ -9,6 +9,10 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 func main() {
@@ -187,7 +191,7 @@ func part1(gardenAlmanac gardenAlmanac) int {
 	var seedGuides []seedGuide
 	for _, seedId := range gardenAlmanac.seeds {
 		newSeedGuide := seedGuide{seed: seedId}
-		newSeedGuide.soil = getAlmanacValue(gardenAlmanac.seedToSoil, seedId)
+		newSeedGuide.soil = getAlmanacValue(gardenAlmanac.seedToSoil, newSeedGuide.seed)
 		newSeedGuide.fertilizer = getAlmanacValue(gardenAlmanac.soilToFertilizer, newSeedGuide.soil)
 		newSeedGuide.water = getAlmanacValue(gardenAlmanac.fertilizerToWater, newSeedGuide.fertilizer)
 		newSeedGuide.light = getAlmanacValue(gardenAlmanac.waterToLight, newSeedGuide.water)
@@ -207,47 +211,57 @@ func part1(gardenAlmanac gardenAlmanac) int {
 	return lowLocation
 }
 
+// perform calculations for seed ranges in place with goroutines instead of saving to memory because this balloons to 62 gigs
 func part2(gardenAlmanac gardenAlmanac) int {
 	// fmt.Printf("%#v\n", gardenAlmanac)
+	p := message.NewPrinter(language.English) // printer for adding commas for large numbers
+	var wg sync.WaitGroup
 	// fix seeds to read as ranges
-	var newSeeds []int
 	var seedStart int
-
+	// slice to hold return values of all goroutines
+	var lowLocations []int = make([]int, len(gardenAlmanac.seeds)/2)
+	fmt.Println("Starting Calculations for", len(gardenAlmanac.seeds)/2, "entries...")
 	for i, seed := range gardenAlmanac.seeds {
-		fmt.Print(i, " ")
+		// even entries are seed starting positions, odd entries are ranges
 		if i%2 == 0 {
 			seedStart = seed
 		} else {
-			for j := 0; j < seed; j++ {
-				newSeeds = append(newSeeds, seedStart+j)
-			}
+			p.Printf("%d: %d seeds.\n", i/2, seed)
+			// use goroutines to parallelize calculations
+			wg.Add(1)
+			go func(id, seedStart, seed int, lowLocations *[]int) {
+				defer wg.Done()
+				var localLowLocation int = int(math.Inf(1))
+				for j := 0; j < seed; j++ {
+					newSeedGuide := seedGuide{seed: seedStart + j}
+					newSeedGuide.soil = getAlmanacValue(gardenAlmanac.seedToSoil, newSeedGuide.seed)
+					newSeedGuide.fertilizer = getAlmanacValue(gardenAlmanac.soilToFertilizer, newSeedGuide.soil)
+					newSeedGuide.water = getAlmanacValue(gardenAlmanac.fertilizerToWater, newSeedGuide.fertilizer)
+					newSeedGuide.light = getAlmanacValue(gardenAlmanac.waterToLight, newSeedGuide.water)
+					newSeedGuide.temperature = getAlmanacValue(gardenAlmanac.lightToTemperature, newSeedGuide.light)
+					newSeedGuide.humidity = getAlmanacValue(gardenAlmanac.temperatureToHumidity, newSeedGuide.temperature)
+					newSeedGuide.location = getAlmanacValue(gardenAlmanac.humidityToLocation, newSeedGuide.humidity)
+					if newSeedGuide.location < localLowLocation {
+						localLowLocation = newSeedGuide.location
+					}
+				}
+				(*lowLocations)[id] = localLowLocation
+				fmt.Print(id, " ")
+			}(i/2, seedStart, seed, &lowLocations)
 		}
 	}
-	gardenAlmanac.seeds = newSeeds
-	// fmt.Printf("%#v\n", gardenAlmanac)
-	fmt.Println("\n", len(gardenAlmanac.seeds), gardenAlmanac.seeds)
+	fmt.Print("done: ")
+	wg.Wait()
+	fmt.Println()
 
-	// get values for each seed
-	var seedGuides []seedGuide
-	for i, seedId := range gardenAlmanac.seeds {
-		fmt.Print(i, " ")
-		newSeedGuide := seedGuide{seed: seedId}
-		newSeedGuide.soil = getAlmanacValue(gardenAlmanac.seedToSoil, seedId)
-		newSeedGuide.fertilizer = getAlmanacValue(gardenAlmanac.soilToFertilizer, newSeedGuide.soil)
-		newSeedGuide.water = getAlmanacValue(gardenAlmanac.fertilizerToWater, newSeedGuide.fertilizer)
-		newSeedGuide.light = getAlmanacValue(gardenAlmanac.waterToLight, newSeedGuide.water)
-		newSeedGuide.temperature = getAlmanacValue(gardenAlmanac.lightToTemperature, newSeedGuide.light)
-		newSeedGuide.humidity = getAlmanacValue(gardenAlmanac.temperatureToHumidity, newSeedGuide.temperature)
-		newSeedGuide.location = getAlmanacValue(gardenAlmanac.humidityToLocation, newSeedGuide.humidity)
-		seedGuides = append(seedGuides, newSeedGuide)
-	}
-	// fmt.Println(seedGuides)
-	// get lowest location value and return that
+	// calculate lowest location from goroutines
 	var lowLocation int = int(math.Inf(1))
-	for _, seed := range seedGuides {
-		if seed.location < lowLocation {
-			lowLocation = seed.location
+	// fmt.Println(lowLocations)
+	for _, loc := range lowLocations {
+		if lowLocation > loc {
+			lowLocation = loc
 		}
 	}
+
 	return lowLocation
 }
