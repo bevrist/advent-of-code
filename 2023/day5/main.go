@@ -213,7 +213,7 @@ func part1(gardenAlmanac gardenAlmanac) int {
 
 // perform calculations for seed ranges in place with goroutines instead of saving to memory because this balloons to 62 gigs
 func part2(gardenAlmanac gardenAlmanac) int {
-	// fmt.Printf("%#v\n", gardenAlmanac)
+	fmt.Printf("%#v\n", gardenAlmanac)
 	p := message.NewPrinter(language.English) // printer for adding commas for large numbers
 	var wg sync.WaitGroup
 	// fix seeds to read as ranges
